@@ -90,7 +90,7 @@ class SiteImportJob(Job):
                 message=f"{verb} {device.name}",
             )
 
-    return super().run(*args, **kwargs)
+        return super().run(*args, **kwargs)
 
     def normalize_data(self, row: dict[str,str]) -> dict[str, str]:
         valid_suffixes = {
