@@ -1,4 +1,4 @@
 from nautobot.apps.jobs import register_jobs
-from training import SiteImportJob
+from jobs import SiteImportJob
 
 register_jobs(SiteImportJob)
