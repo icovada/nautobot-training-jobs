@@ -76,22 +76,21 @@ class SiteImportJob(Job):
     inputfile = FileVar(required=True)
  
     def run(self, *args, **kwargs):
-        with open(kwargs['file'], "r") as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
-                normalized_row = self.normalize_data(row)
-                device, created = Location.objects.update_or_create(
-                    name=normalized_row['name'],
-                    physical_address=f"{normalized_row['city']}, {normalized_row['state']}"
-                )
-    
-                verb = "Created" if created else "Updated"
-                self.logger.info(
-                    obj=device,
-                    message=f"{verb} {device.name}",
-                )
-    
-        return super().run(*args, **kwargs)
+        reader = csv.DictReader(inputfile)
+        for row in reader:
+            normalized_row = self.normalize_data(row)
+            device, created = Location.objects.update_or_create(
+                name=normalized_row['name'],
+                physical_address=f"{normalized_row['city']}, {normalized_row['state']}"
+            )
+
+            verb = "Created" if created else "Updated"
+            self.logger.info(
+                obj=device,
+                message=f"{verb} {device.name}",
+            )
+
+    return super().run(*args, **kwargs)
 
     def normalize_data(self, row: dict[str,str]) -> dict[str, str]:
         valid_suffixes = {
