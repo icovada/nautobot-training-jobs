@@ -100,7 +100,7 @@ class SiteImportJob(Job):
             "-BR": None
         }
 
-        assert row['city'][:-3] in valid_suffixes, f"Invalid suffix for city {row['city']}"
+        assert row['name'][:-3] in valid_suffixes, f"Invalid suffix for site {row['name']}"
 
         row['state'] = valid_suffixes.get(row['state'], row['state'])
 
