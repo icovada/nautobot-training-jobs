@@ -8,6 +8,7 @@ from nautobot.extras.jobs import Job, FileVar
 from nautobot.dcim.models import (
     Location, LocationType
 )
+from nautobot.extras.models import Status
 
 STATE_MAP = {
     "AL": "Alabama",
@@ -86,12 +87,14 @@ class SiteImportJob(Job):
     def run(self, inputfile, *args, **kwargs):
         textbuffer = io.TextIOWrapper(inputfile)
         reader = csv.DictReader(textbuffer)
+        active = Status.objects.get(name="Active")
         for row in reader:
             normalized_row = self.normalize_data(row)
             device, created = Location.objects.update_or_create(
                 name=normalized_row['name'],
                 physical_address=f"{normalized_row['city']}, {normalized_row['state']}",
-                location_type=normalized_row["site_type"]
+                location_type=normalized_row["site_type"],
+                status=active
             )
 
             verb = "Created" if created else "Updated"
