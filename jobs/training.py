@@ -77,7 +77,7 @@ class SiteImportJob(Job):
     inputfile = FileVar(required=True)
  
     def __init__(self, *args, **kwargs):
-        super().__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.sitemapper = {
             "-DC": LocationType.objects.get(name="Data Center"),
             "-BR": LocationType.objects.get(name="Branch")
