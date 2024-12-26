@@ -90,7 +90,8 @@ class SiteImportJob(Job):
             normalized_row = self.normalize_data(row)
             device, created = Location.objects.update_or_create(
                 name=normalized_row['name'],
-                physical_address=f"{normalized_row['city']}, {normalized_row['state']}"
+                physical_address=f"{normalized_row['city']}, {normalized_row['state']}",
+                location_type=normalized_row["site_type"]
             )
 
             verb = "Created" if created else "Updated"
