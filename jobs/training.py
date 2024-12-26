@@ -6,7 +6,7 @@ import io
 
 from nautobot.extras.jobs import Job, FileVar
 from nautobot.dcim.models import (
-    Location
+    Location, LocationType
 )
 
 STATE_MAP = {
@@ -73,8 +73,15 @@ class SiteImportJob(Job):
         read_only = False
         approval_required = False
         has_sensitive_variables = False
-        
+    
     inputfile = FileVar(required=True)
+ 
+    def __init__(self, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
+        self.sitemapper = {
+            "-DC": LocationType.objects.get(name="Data Center"),
+            "-BR": LocationType.objects.get(name="Branch")
+        }
  
     def run(self, inputfile, *args, **kwargs):
         textbuffer = io.TextIOWrapper(inputfile)
@@ -95,13 +102,11 @@ class SiteImportJob(Job):
         return super().run(*args, **kwargs)
 
     def normalize_data(self, row: dict[str,str]) -> dict[str, str]:
-        valid_suffixes = {
-            "-DC": None, 
-            "-BR": None
-        }
-
-        assert row['name'][-3:] in valid_suffixes, f"Invalid suffix for site {row['name']}"
-
-        row['state'] = valid_suffixes.get(row['state'], row['state'])
+        try:
+            row['site_type'] = self.sitemapper[row["name"][-3:]]
+        except KeyError:
+            raise ValueError(f"Invalid suffix for site {row['name']}")
+        
+        row['state'] = STATE_MAP.get(row['state'], row['state'])
 
         return row
