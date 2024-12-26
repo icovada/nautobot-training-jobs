@@ -2,6 +2,7 @@
 """Use retrieve device OS version and document in Nautobot LCM app."""
 
 import csv
+import io
 
 from nautobot.extras.jobs import Job, FileVar
 from nautobot.dcim.models import (
@@ -76,7 +77,8 @@ class SiteImportJob(Job):
     inputfile = FileVar(required=True)
  
     def run(self, inputfile, *args, **kwargs):
-        reader = csv.DictReader(inputfile)
+        textbuffer = io.TextIOWrapper(inputfile)
+        reader = csv.DictReader(textbuffer)
         for row in reader:
             normalized_row = self.normalize_data(row)
             device, created = Location.objects.update_or_create(
