@@ -100,8 +100,6 @@ class SiteImportJob(Job):
             verb = "Created" if created else "Updated"
             self.logger.info("%s %s" % (verb, device.name))
 
-        return super().run(*args, **kwargs)
-
     def normalize_data(self, row: dict[str,str]) -> dict[str, str]:
         try:
             row['site_type'] = self.sitemapper[row["name"][-3:]]
