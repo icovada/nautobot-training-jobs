@@ -98,10 +98,7 @@ class SiteImportJob(Job):
             )
 
             verb = "Created" if created else "Updated"
-            self.logger.info(
-                obj=device,
-                message=f"{verb} {device.name}",
-            )
+            self.logger.info("%s %s" % (verb, device.name))
 
         return super().run(*args, **kwargs)
 
